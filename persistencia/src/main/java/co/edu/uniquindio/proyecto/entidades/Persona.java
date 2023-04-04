@@ -7,9 +7,12 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Entity
-@Inheritance(strategy = InheritanceType.JOINED)
+//@Entity
+//@Inheritance(strategy = InheritanceType.JOINED)
+@Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
+@MappedSuperclass
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter @Setter
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @ToString
@@ -29,5 +32,7 @@ public class Persona implements Serializable
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private GeneroPersona genero;
+
+
 
 }
