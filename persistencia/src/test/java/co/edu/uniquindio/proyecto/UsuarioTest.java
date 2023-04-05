@@ -10,12 +10,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.jdbc.Sql;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -136,5 +139,49 @@ public class UsuarioTest
         usuarios.forEach(usuario -> System.out.println(usuario));
 
         //Assertions.assertEquals(3, usuarios.size());
+    }
+
+    @Test
+    @Sql("classpath:usuarios.sql")
+    public void filtrarNombreTest ()
+    {
+        List<Usuario> lista = usuarioRepo.findAllByNombre("FOR");
+
+        lista.forEach(System.out::println);
+    }
+
+    @Test
+    @Sql("classpath:usuarios.sql")
+    public void filtrarEmailTest ()
+    {
+        Optional<Usuario> usuario = usuarioRepo.findAllByEmail("for@gmail.com");
+
+        if (usuario.isPresent())
+        {
+            System.out.println(usuario.get());
+            return;
+        }
+        System.out.println("El correo no corresponde a ningún usuario");
+    }
+
+    @Test
+    @Sql("classpath:usuarios.sql")
+    public void paginarListaTest ()
+    {
+        Pageable vaginador = PageRequest.of(0, 2);
+
+        Page<Usuario> lista = usuarioRepo.findAll(vaginador);
+
+//        List<Usuario> respuesta = new ArrayList<>();
+
+        System.out.println(lista.stream().collect(Collectors.toList()));
+    }
+
+    @Test
+    @Sql("classpath:usuarios.sql")
+    public void ordenarListaTest ()
+    {
+        List<Usuario> lista = usuarioRepo.findAll(Sort.by("nombre"));
+        System.out.println(lista);
     }
 }

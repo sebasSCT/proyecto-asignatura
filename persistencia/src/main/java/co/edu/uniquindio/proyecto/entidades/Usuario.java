@@ -18,6 +18,9 @@ public class Usuario extends Persona implements Serializable {
     @Column(nullable = false, unique = true, length = 120)
     private String email;
 
+    @Column(nullable = false, unique = true, length = 120)
+    private String password;
+
     @ElementCollection
     @Column(nullable = false)
     private Map<String, String> numTelefonos;
