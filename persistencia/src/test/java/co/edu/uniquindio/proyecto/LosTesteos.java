@@ -1,9 +1,13 @@
 package co.edu.uniquindio.proyecto;
 
+import co.edu.uniquindio.proyecto.dto.UsuarioValido;
+import co.edu.uniquindio.proyecto.entidades.Autor;
 import co.edu.uniquindio.proyecto.entidades.Ciudad;
 import co.edu.uniquindio.proyecto.entidades.GeneroPersona;
 import co.edu.uniquindio.proyecto.entidades.Usuario;
+import co.edu.uniquindio.proyecto.repositorios.AutorRepo;
 import co.edu.uniquindio.proyecto.repositorios.CiudadRepo;
+import co.edu.uniquindio.proyecto.repositorios.LibroRepo;
 import co.edu.uniquindio.proyecto.repositorios.UsuarioRepo;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -22,13 +26,20 @@ import java.util.stream.Collectors;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class UsuarioTest
+public class LosTesteos
 {
     @Autowired
     private UsuarioRepo usuarioRepo;
 
     @Autowired
     private CiudadRepo ciudadRepo;
+
+    @Autowired
+    private LibroRepo libroRepo;
+
+    @Autowired
+    private AutorRepo autorRepo;
+
     @Test
     public void registrarTest ()
     {
@@ -184,4 +195,62 @@ public class UsuarioTest
         List<Usuario> lista = usuarioRepo.findAll(Sort.by("nombre"));
         System.out.println(lista);
     }
+
+    @Test
+    @Sql("classpath:usuarios.sql")
+    public void obtenerAutoresTest ()
+    {
+        List<Autor> autores = libroRepo.obtenerAutores("abcd1");
+
+        System.out.println(autores);
+    }
+
+    @Test
+    @Sql("classpath:usuarios.sql")
+    public void obtenerTelefonosTest ()
+    {
+        List<Map<String, String>> numeros = usuarioRepo.obtenerTelefonos("fer@gmail.com");
+
+        numeros.forEach(n -> System.out.println(n.entrySet().toString()));
+    }
+
+    @Test
+    @Sql("classpath:usuarios.sql")
+    public void obtenerAutoresLibrosTest ()
+    {
+        List<Object[]> respuesta = autorRepo.listarLibrosYAutores();
+
+        for (Object[] a : respuesta)
+        {
+            System.out.println(a[0] + " " + a[1]);
+        }
+
+    }
+
+    @Test
+    @Sql("classpath:usuarios.sql")
+    public void listarAutoresLibros ()
+    {
+        List<List<Autor>> autoresLibros = autorRepo.listarAutoresLibros("autor2");
+
+        autoresLibros.forEach(a -> a.forEach(System.out::println));
+    }
+
+    @Test
+    @Sql("classpath:usuarios.sql")
+    public void listarUsuariosValidos ()
+    {
+        List<UsuarioValido> usuarios = usuarioRepo.listarUsuariosValidos(1);
+
+//        for (Object[] a : usuarios)
+//        {
+//            for (Object b : a)
+//            {
+//                System.out.println(b);
+//            }
+//        }
+
+        usuarios.forEach(System.out::println);
+    }
+
 }
